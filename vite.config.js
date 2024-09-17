@@ -45,6 +45,20 @@ export default defineConfig({
           },
         ],
       },
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith("/image"),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "images",
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
+      },
       devOptions: { enabled: true },
     }),
   ],
