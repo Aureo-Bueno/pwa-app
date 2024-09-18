@@ -1,58 +1,43 @@
-const CACHE_NAME = "my-cache";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import { clientsClaim } from "workbox-core";
+import { ExpirationPlugin } from "workbox-expiration";
+import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
+import { registerRoute, Route } from "workbox-routing";
+import { NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
 
-self.addEventListener("install", (event) => {
-  console.log("Service Worker installing.");
+self.skipWaiting();
+clientsClaim();
 
-  event.waitUntil(
-    caches
-      .open(CACHE_NAME)
-      .then((cache) =>
-        cache.addAll(["/index.html"]).then(() => self.skipWaiting())
-      )
-  );
-});
+cleanupOutdatedCaches();
 
-self.addEventListener("fetch", (event) => {
-  console.log(`Service Worker fetching: ${event.request.url}`);
-  event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.match(event.request).then((cacheResponse) => {
-        const response = fetch(event.request).then((networkResponse) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
-        return cacheResponse || response;
-      });
-    })
-  );
-});
+precacheAndRoute(self.__WB_MANIFEST);
 
-const firstCache = async (request) => {
-  const cacheResponse = await caches.match(request);
+const imageRoute = new Route(
+  ({ request }) => {
+    return request.destination === "image";
+  },
+  new StaleWhileRevalidate({
+    cacheName: "images",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24 * 365,
+        maxEntries: 30,
+      }),
+    ],
+  })
+);
 
-  if (cacheResponse) {
-    return cacheResponse;
-  }
+const cssRoute = new Route(
+  ({ request }) => {
+    return request.destination === "style";
+  },
+  new NetworkFirst({
+    cacheName: "styles",
+  })
+);
 
-  const response = await fetch(request);
-  updateCache(request, response.clone());
-
-  return response;
-};
-
-const firstNetwork = async (request) => {
-  const response = await fetch(request);
-
-  if (response) {
-    updateCache(request, response.clone());
-  }
-
-  const responseCache = await caches.match(request);
-
-  return responseCache;
-};
-
-const updateCache = async (request, response) => {
-  const cache = await caches.open(CACHE_NAME);
-  await cache.put(request, response);
-};
+registerRoute(imageRoute);
+registerRoute(cssRoute);

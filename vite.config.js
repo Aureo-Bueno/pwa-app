@@ -42,21 +42,6 @@ const vitePWA = VitePWA({
       },
     ],
   },
-  workbox: {
-    runtimeCaching: [
-      {
-        urlPattern: ({ url }) => url.pathname.startsWith("/image"),
-        handler: "CacheFirst",
-        options: {
-          cacheName: "images",
-          cacheableResponse: {
-            statuses: [0, 200],
-          },
-        },
-      },
-    ],
-  },
-  devOptions: { enabled: true },
 });
 
 // https://vitejs.dev/config/
