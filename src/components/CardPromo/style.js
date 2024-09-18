@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Container = styled.li`
@@ -49,4 +50,25 @@ export const Price = styled.p`
   font-weight: 500;
   color: #49454f;
   text-align: center;
+`;
+
+export const CardLink = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: center;
+  background-color: ${(props) =>
+    props.$variant === "secundario" ? "transparent" : "#6750a4"};
+  border-radius: 50px;
+  border: ${(props) =>
+    props.$variant === "secundario" ? "1px solid #79747E" : "none"};
+  color: ${(props) =>
+    props.$variant === "secundario" ? "#6750a4" : "#ffffff"};
+  font-weight: 500;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #d0bcff;
+  }
 `;

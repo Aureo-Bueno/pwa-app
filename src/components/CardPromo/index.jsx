@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { Button } from "../Button";
 import * as Styled from "./style";
 
 const CardPromo = ({ card }) => {
@@ -16,7 +15,9 @@ const CardPromo = ({ card }) => {
           <Styled.Paragraph>Tipo: {card.tipo}</Styled.Paragraph>
         </div>
         <Styled.Price>R$ {card.valor}</Styled.Price>
-        <Button>Ver detalhes</Button>
+        <Styled.CardLink to={`/reservas/${card.id}`}>
+          Ver detalhes
+        </Styled.CardLink>
       </Styled.Infos>
     </Styled.Container>
   );

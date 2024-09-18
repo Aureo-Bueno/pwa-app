@@ -30,11 +30,3 @@ export const Title1 = styled.h1`
     transform: translate(-50%, -15%);
   }
 `;
-
-export const Banner = styled.picture`
-  display: block;
-
-  & > img {
-    width: 100%;
-  }
-`;
