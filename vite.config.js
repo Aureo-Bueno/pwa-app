@@ -4,6 +4,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const vitePWA = VitePWA({
   registerType: "autoUpdate",
+  strategies: "injectManifest",
   manifest: {
     id: "/",
     name: "my-app",
